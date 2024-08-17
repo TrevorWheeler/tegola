@@ -44,6 +44,51 @@ srid = 3857  # Web Mercator
     WHERE highway IN ('motorway', 'trunk', 'primary') AND way && !BBOX!
   """
 
+  [[providers.layers]]
+  name = "buildings"
+  geometry_fieldname = "way"
+  geometry_type = "polygon"
+  id_fieldname = "osm_id"
+  sql = """
+    SELECT ST_AsMVTGeom(way, !BBOX!) AS way, osm_id, name
+    FROM planet_osm_polygon
+    WHERE building IS NOT NULL AND way && !BBOX!
+  """
+
+  [[providers.layers]]
+  name = "parks"
+  geometry_fieldname = "way"
+  geometry_type = "polygon"
+  id_fieldname = "osm_id"
+  sql = """
+    SELECT ST_AsMVTGeom(way, !BBOX!) AS way, osm_id, name
+    FROM planet_osm_polygon
+    WHERE leisure = 'park' AND way && !BBOX!
+  """
+
+  [[providers.layers]]
+  name = "landuse"
+  geometry_fieldname = "way"
+  geometry_type = "polygon"
+  id_fieldname = "osm_id"
+  sql = """
+    SELECT ST_AsMVTGeom(way, !BBOX!) AS way, osm_id, name
+    FROM planet_osm_polygon
+    WHERE landuse IS NOT NULL AND way && !BBOX!
+  """
+
+  [[providers.layers]]
+  name = "place_labels"
+  geometry_fieldname = "way"
+  geometry_type = "point"
+  id_fieldname = "osm_id"
+  sql = """
+    SELECT osm_id, name, place, ST_AsMVTGeom(way, !BBOX!) AS way
+    FROM planet_osm_point
+    WHERE place IN ('city', 'town', 'village') AND way && !BBOX!
+  """
+
+
 [[maps]]
 name = "australia"
 center = [153.0260, 27.4705, 10.0]  # Set the center of the map so the user is auto navigated to Australia
@@ -55,5 +100,25 @@ center = [153.0260, 27.4705, 10.0]  # Set the center of the map so the user is a
 
   [[maps.layers]]
   provider_layer = "australia.main_roads"
+  min_zoom = 0
+  max_zoom = 20
+
+  [[maps.layers]]
+  provider_layer = "australia.buildings"
+  min_zoom = 0
+  max_zoom = 20
+
+  [[maps.layers]]
+  provider_layer = "australia.parks"
+  min_zoom = 0
+  max_zoom = 20
+
+  [[maps.layers]]
+  provider_layer = "australia.landuse"
+  min_zoom = 0
+  max_zoom = 20
+
+  [[maps.layers]]
+  provider_layer = "australia.place_labels"
   min_zoom = 0
   max_zoom = 20
