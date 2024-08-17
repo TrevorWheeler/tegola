@@ -22,62 +22,38 @@ type = "mvt_postgis"
 uri = "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${TEGOLA_POSTGIS_SSL}"
 srid = 3857  # Web Mercator
 
-[[providers.layers]]
-name = "road"
-geometry_fieldname = "way"
-geometry_type = "linestring"
-id_fieldname = "osm_id"
-sql = """
-  SELECT ST_AsMVTGeom(way, !BBOX!) AS way, osm_id, name
-  FROM planet_osm_line
-  WHERE highway IS NOT NULL AND way && !BBOX!
-"""
+  [[providers.layers]]
+  name = "road"
+  geometry_fieldname = "way"
+  geometry_type = "linestring"
+  id_fieldname = "osm_id"
+  sql = """
+    SELECT ST_AsMVTGeom(way, !BBOX!) AS way, osm_id, name
+    FROM planet_osm_line
+    WHERE highway IS NOT NULL AND way && !BBOX!
+  """
 
-[[providers.layers]]
-name = "main_roads"
-geometry_fieldname = "way"
-geometry_type = "linestring"
-id_fieldname = "osm_id"
-sql = """
-  SELECT ST_AsMVTGeom(
-    ST_Transform(way, 3857),
-    ST_Transform(!BBOX!, 3857)
-  ) AS way, osm_id, name
-  FROM planet_osm_line
-  WHERE highway IN ('motorway', 'trunk', 'primary')
-  AND ST_Transform(way, 3857) && ST_Transform(!BBOX!, 3857)
-"""
-
-[[providers.layers]]
-name = "lakes"
-geometry_fieldname = "way"
-geometry_type = "polygon"
-id_fieldname = "osm_id"
-sql = """
-  SELECT ST_AsMVTGeom(
-    ST_Transform(way, 3857),
-    ST_Transform(!BBOX!, 3857)
-  ) AS way, osm_id, name
-  FROM planet_osm_polygon
-  WHERE "natural" = 'water'
-  AND ST_Transform(way, 3857) && ST_Transform(!BBOX!, 3857)
-"""
+  [[providers.layers]]
+  name = "main_roads"
+  geometry_fieldname = "way"
+  geometry_type = "linestring"
+  id_fieldname = "osm_id"
+  sql = """
+    SELECT ST_AsMVTGeom(way, !BBOX!) AS way, osm_id, name
+    FROM planet_osm_line
+    WHERE highway IN ('motorway', 'trunk', 'primary') AND way && !BBOX!
+  """
 
 [[maps]]
 name = "australia"
-center = [133.7751, -25.2744, 4.0]  # Set the center of the map so the user is auto navigated to Australia
+center = [153.0260, 27.4705, 10.0]  # Set the center of the map so the user is auto navigated to Australia
 
   [[maps.layers]]
   provider_layer = "australia.road"
-  min_zoom = 5
+  min_zoom = 0
   max_zoom = 20
 
   [[maps.layers]]
   provider_layer = "australia.main_roads"
-  min_zoom = 5
-  max_zoom = 20
-
-  [[maps.layers]]
-  provider_layer = "australia.lakes"
-  min_zoom = 5
+  min_zoom = 0
   max_zoom = 20

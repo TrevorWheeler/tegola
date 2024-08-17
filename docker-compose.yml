@@ -22,22 +22,22 @@ services:
     ports:
       - 5432:5432
 
-  # migration:
-  #   image: postgis/postgis:13-3.1
-  #   container_name: migration
-  #   depends_on:
-  #     database:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./data:/data
-  #   environment:
-  #     PGUSER: postgres
-  #     PGPASSWORD: postgres
-  #   command:
-  #     - /bin/bash
-  #     - -c
-  #     - |
-  #       bash /data/init.sh
+  migration:
+    image: postgis/postgis:13-3.1
+    container_name: migration
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./data:/data
+    environment:
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    command:
+      - /bin/bash
+      - -c
+      - |
+        bash /data/init.sh
 
 
   tegola-mvt-postgis-provider:
